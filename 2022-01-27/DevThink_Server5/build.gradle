@@ -1,0 +1,105 @@
+plugins {
+    id 'org.springframework.boot' version '2.5.8'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'org.asciidoctor.jvm.convert' version '3.3.2'
+    id 'java'
+}
+
+group = 'com.devthink'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+configurations {
+    asciidoctorExtensions
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    set('snippetsDir', file("build/generated-snippets"))
+}
+
+dependencies {
+    // Use JUnit Jupiter API for testing.
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    
+    // Sprig data Jpa
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.6.2'
+
+    // Spring Web
+    implementation 'org.springframework.boot:spring-boot-starter-web:2.6.2'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test:2.6.2'
+
+    // Lombok
+    compileOnly 'org.projectlombok:lombok:1.18.22'
+    annotationProcessor 'org.projectlombok:lombok:1.18.22'
+
+    // Spring dev tools
+    developmentOnly 'org.springframework.boot:spring-boot-devtools:2.6.2'
+
+    // Spring rest docs
+    asciidoctorExtensions 'org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.5.RELEASE'
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc:2.0.5.RELEASE'
+
+    // Jackson for JSON.
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.13.1'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.1'
+
+    // Mockito
+    testImplementation 'org.springframework.boot:spring-boot-starter-test:2.6.2'
+
+    // AssertJ
+    testImplementation 'org.assertj:assertj-core:3.22.0'
+
+    // MariaDB
+    implementation 'org.mariadb.jdbc:mariadb-java-client:2.7.3'
+
+    // DozerMapper
+    implementation 'com.github.dozermapper:dozer-core:6.5.2'
+
+
+    // Spring Validation
+    implementation 'org.springframework.boot:spring-boot-starter-validation:2.6.2'
+
+    // JWT
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.2',
+            'io.jsonwebtoken:jjwt-jackson:0.11.2'
+
+//    // Spring Security
+//    implementation 'org.springframework.boot:spring-boot-starter-security:2.6.2'
+
+
+    //H2
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    runtimeOnly 'com.h2database:h2:2.0.206'
+
+    // Swagger UI
+    implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
+    implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
+
+    implementation 'org.javassist:javassist:3.23.1-GA'
+}
+
+test {
+    outputs.dir snippetsDir
+    useJUnitPlatform()
+}
+
+asciidoctor {
+    inputs.dir snippetsDir
+    dependsOn test
+}
+
+bootJar {
+    dependsOn asciidoctor
+    copy {
+        from "${asciidoctor.outputDir}"
+        into 'src/main/resources/static/docs'
+    }
+}
