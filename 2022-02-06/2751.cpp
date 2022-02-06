@@ -16,6 +16,7 @@ void merge(int st, int en){
         else tmp[i] = arr[ridx++];
     }
     for(int i=st; i< en; i++) arr[i] = tmp[i];
+}
 
 void merge_sort(int st, int en){
     if(en == st+1) return;
